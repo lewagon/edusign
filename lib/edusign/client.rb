@@ -242,7 +242,7 @@ module Edusign
     end
 
     def options(opts = {})
-      opts.merge({"Authorization" => "Bearer #{@api_token}", "Content-Type" => "application/json"})
+      opts.merge({"Authorization" => "Bearer #{@edusign_account_api_key}", "Content-Type" => "application/json"})
     end
 
     class Response
