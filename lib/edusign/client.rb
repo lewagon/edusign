@@ -1,3 +1,5 @@
+require "httparty"
+
 module Edusign
   class Client
     include HTTParty
@@ -6,7 +8,6 @@ module Edusign
     ALREADY_LOCKED_ERROR_MESSAGE = "Course already locked".freeze
     STUDENT_ALREADY_ADDED_TO_COURSE_ERROR_MESSAGE = "Student already in the list"
     LOCKED_ERROR_MESSAGE = "course locked".freeze
-    WORKERS_RETRY_DELAY = 30.seconds.freeze
 
     class BadGatewayError < StandardError; end
 
