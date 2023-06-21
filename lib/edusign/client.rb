@@ -27,9 +27,10 @@ module Edusign
     end
 
     def create_or_update_group(name, student_uids: [], edusign_group_uid: nil)
-      payload = {group: {NAME: name, STUDENTS: student_uids}}
+      payload = {group: {NAME: name, STUDENTS: []}}
       if group(edusign_group_uid).present?
         payload[:group][:ID] = edusign_group_uid
+        payload[:group][:STUDENTS] = student_uids
         response = api :patch, "/group", payload.to_json
       else
         response = api :post, "/group", payload.to_json
