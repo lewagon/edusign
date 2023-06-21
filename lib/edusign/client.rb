@@ -26,15 +26,14 @@ module Edusign
     end
 
     def create_or_update_group(name, student_uids: [], edusign_group_uid: nil)
-      payload = { group: { NAME: name, STUDENTS: student_uids } }
+      payload = {group: {NAME: name, STUDENTS: student_uids}}
       if group(edusign_group_uid).present?
         payload[:group][:ID] = edusign_group_uid
         response = api :patch, "/group", payload.to_json
-        raise Response::Error, response.message if response.error?
       else
         response = api :post, "/group", payload.to_json
-        raise Response::Error, response.message if response.error?
       end
+      raise Response::Error, response.message if response.error?
       response.e
     end
 
@@ -99,9 +98,9 @@ module Edusign
       course_on_edusign = course(edusign_course_uid)
       if course_on_edusign[:LOCKED].zero?
         response = api :get, "/course/lock/#{edusign_course_uid}"
-        attendance_sheet_url = response.body[:result][:link]
+        response.body[:result][:link]
       else
-        attendance_sheet_url = course_on_edusign[:ATTENDANCE_LIST_GENERATED] # Don't know why we use this
+        course_on_edusign[:ATTENDANCE_LIST_GENERATED]
       end
     rescue Response::Error => e
       raise e unless e.message == ALREADY_LOCKED_ERROR_MESSAGE
@@ -190,7 +189,7 @@ module Edusign
           FIRSTNAME: first_name,
           LASTNAME: last_name,
           EMAIL: email
-        }
+        },
         dontSendCredentials: true
       }
       api :post, "/professor", payload.to_json
