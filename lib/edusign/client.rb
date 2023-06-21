@@ -28,7 +28,7 @@ module Edusign
 
     def create_or_update_group(name, student_uids: [], edusign_group_uid: nil)
       payload = {group: {NAME: name, STUDENTS: []}}
-      if group(edusign_group_uid).present?
+      if edusign_group_uid.present?
         payload[:group][:ID] = edusign_group_uid
         payload[:group][:STUDENTS] = student_uids
         response = api :patch, "/group", payload.to_json
@@ -36,7 +36,8 @@ module Edusign
         response = api :post, "/group", payload.to_json
       end
       raise Response::Error, response.message if response.error?
-      response.e
+
+      response
     end
 
     def add_students_to_group(edusign_group_uid, student_uids)
@@ -121,7 +122,7 @@ module Edusign
 
     def add_student_to_course(edusign_course_uid, edusign_student_uid)
       api :put, "/course/attendance/#{edusign_course_uid}", {studentId: edusign_student_uid}.to_json
-    rescue EdusignClient::Response::Error => e
+    rescue Response::Error => e
       raise e unless e.message == STUDENT_ALREADY_ADDED_TO_COURSE_ERROR_MESSAGE
     end
 
