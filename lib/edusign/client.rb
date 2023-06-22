@@ -1,19 +1,11 @@
+require "active_support/configurable"
 require "httparty"
 
 module Edusign
   class Client
+    include ActiveSupport::Configurable
     include HTTParty
     base_uri "https://ext.edusign.fr/v1"
-
-    class << self
-      def setup
-        yield self
-      end
-
-      def account_api_key=(key)
-        @@account_api_key = key
-      end
-    end
 
     ALREADY_LOCKED_ERROR_MESSAGE = "Course already locked".freeze
     STUDENT_ALREADY_ADDED_TO_COURSE_ERROR_MESSAGE = "Student already in the list"
@@ -23,10 +15,10 @@ module Edusign
 
     class BadGatewayError < StandardError; end
 
-    def initialize(account_api_key: @@account_api_key)
-      raise NoApiKeyError, "Please provide an Edusing account API key" if account_api_key.nil?
-
+    def initialize(account_api_key: config.account_api_key)
       @account_api_key = account_api_key
+
+      raise NoApiKeyError, "Please provide an Edusing account API key" if @account_api_key.nil?
     end
 
     # GROUP
