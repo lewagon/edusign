@@ -6,6 +6,10 @@ module Edusign
     base_uri "https://ext.edusign.fr/v1"
 
     class << self
+      def setup
+        yield self
+      end
+
       def account_api_key=(key)
         @@account_api_key = key
       end
@@ -23,10 +27,6 @@ module Edusign
       raise NoApiKeyError, "Please provide an Edusing account API key" if account_api_key.nil?
 
       @account_api_key = account_api_key
-    end
-
-    def self.setup
-      yield self
     end
 
     # GROUP
