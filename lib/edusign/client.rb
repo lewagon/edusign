@@ -10,6 +10,7 @@ module Edusign
     ALREADY_LOCKED_ERROR_MESSAGE = "Course already locked".freeze
     STUDENT_ALREADY_ADDED_TO_COURSE_ERROR_MESSAGE = "Student already in the list"
     LOCKED_ERROR_MESSAGE = "course locked".freeze
+    COURSE_NOT_FOUND_ERROR_MESSAGE = "No course with this ID found"
 
     class NoApiKeyError < StandardError; end
 
@@ -61,6 +62,8 @@ module Edusign
     def course(course_uid:)
       response = api :get, "/course/#{course_uid}"
       response.result
+    rescue Response::Error => e
+      raise e unless e.message == COURSE_NOT_FOUND_ERROR_MESSAGE
     end
 
     def create_course(group_uid:, name:, starts_at:, ends_at:, teacher_uid:, description: nil, api_id: nil)
