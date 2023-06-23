@@ -49,7 +49,7 @@ module Edusign
 
     def add_students_to_group(group_uid:, student_uids:)
       group = group(group_uid: group_uid)
-      group[:STUDENTS] = student_uids
+      group[:STUDENTS] = (group[:STUDENTS] + student_uids).uniq
       api :patch, "/group", {"group" => group}.to_json
     end
 
