@@ -107,7 +107,7 @@ module Edusign
     end
 
     def lock_course(course_uid:)
-      course_on_edusign = course(course_uid)
+      course_on_edusign = course(course_uid: course_uid)
       if course_on_edusign[:LOCKED].zero?
         response = api :get, "/course/lock/#{course_uid}"
         response.body[:result][:link]
