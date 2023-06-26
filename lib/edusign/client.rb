@@ -25,6 +25,8 @@ module Edusign
     # GROUP
 
     def group(group_uid:)
+      raise Response::Error, "Group doesn't exist" if group_uid.blank?
+
       return @group if @group.present?
 
       response = api :get, "/group/#{group_uid}"
@@ -70,8 +72,8 @@ module Edusign
       payload = {
         course: {
           NAME: name,
-          START: starts_at,
-          END: ends_at,
+          START: starts_at.iso8601,
+          END: ends_at.iso8601,
           DESCRIPTION: description,
           PROFESSOR: teacher_uid,
           SCHOOL_GROUP: [group_uid],
@@ -87,8 +89,8 @@ module Edusign
         course: {
           ID: course_uid,
           NAME: name,
-          START: starts_at,
-          END: ends_at,
+          START: starts_at.iso8601,
+          END: ends_at.iso8601,
           DESCRIPTION: description,
           PROFESSOR: teacher_uid,
           SCHOOL_GROUP: [group_uid],
@@ -133,6 +135,11 @@ module Edusign
       api :put, "/course/attendance/#{course_uid}", {studentId: student_uid}.to_json
     rescue Response::Error => e
       raise e unless e.message == STUDENT_ALREADY_ADDED_TO_COURSE_ERROR_MESSAGE
+    end
+
+    def send_signature_email(course_uid:)
+      students = course(course_uid: course_uid)[:STUDENTS].reject { |student| student[:state] }.map { |student| student[:studentId] }
+      api :post, "/course/send-sign-emails", {"course" => course_id, "students" => students}.to_json
     end
 
     # STUDENT
@@ -184,6 +191,15 @@ module Edusign
     def student_by_email(email:)
       response = api(:get, "/student/by-email/#{email}")
       response.result
+    end
+
+    def declare_absence(student_uid:, course_uid:, type:, comment:)
+      api :post, "/justified-absence", {
+        STUDENT_ID: student_uid,
+        COURSE_ID: course_id,
+        TYPE: type,
+        COMMENT: comment
+      }.to_json
     end
 
     # TEACHER
