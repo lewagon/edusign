@@ -196,7 +196,7 @@ module Edusign
     def declare_absence(student_uid:, course_uid:, type:, comment:)
       api :post, "/justified-absence", {
         STUDENT_ID: student_uid,
-        COURSE_ID: course_id,
+        COURSE_ID: course_uid,
         TYPE: type,
         COMMENT: comment
       }.to_json
