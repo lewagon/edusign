@@ -139,7 +139,7 @@ module Edusign
 
     def send_signature_email(course_uid:)
       students = course(course_uid: course_uid)[:STUDENTS].reject { |student| student[:state] }.map { |student| student[:studentId] }
-      api :post, "/course/send-sign-emails", {"course" => course_id, "students" => students}.to_json
+      api :post, "/course/send-sign-emails", {"course" => course_uid, "students" => students}.to_json
     end
 
     # STUDENT
