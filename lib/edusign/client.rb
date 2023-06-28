@@ -262,7 +262,7 @@ module Edusign
       raise BadGatewayError, request.message if request.code == 502
 
       response = Response.new(JSON.parse(request.body, symbolize_names: true))
-      raise Response::Error, response.message if response.error? && Rails.env.production?
+      raise Response::Error, response.message if response.error?
 
       response
     rescue RestClient::ExceptionWithResponse => e
