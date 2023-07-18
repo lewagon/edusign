@@ -15,6 +15,7 @@ module Edusign
     class NoApiKeyError < StandardError; end
 
     class BadGatewayError < StandardError; end
+
     class GatewayTimeoutError < StandardError; end
 
     def initialize(account_api_key: config.account_api_key)
