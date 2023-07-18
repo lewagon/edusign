@@ -15,6 +15,7 @@ module Edusign
     class NoApiKeyError < StandardError; end
 
     class BadGatewayError < StandardError; end
+    class GatewayTimeoutError < StandardError; end
 
     def initialize(account_api_key: config.account_api_key)
       @account_api_key = account_api_key
@@ -262,6 +263,7 @@ module Edusign
         self.class.send(http_method, path, body: body, headers: options(opts))
       end
       raise BadGatewayError, request.message if request.code == 502
+      raise GatewayTimeoutError, request.message if request.code == 504
 
       response = Response.new(JSON.parse(request.body, symbolize_names: true))
       raise Response::Error, response.message if response.error?
