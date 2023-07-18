@@ -277,8 +277,8 @@ module Edusign
 
     class Response
       class Error < StandardError
-        PROFESSOR_NOT_FOUND_ERROR_MESSAGE = "Professor not found".freeze
-        PROFESSOR_DELETED_ERROR_MESSAGE = "Professor was deleted".freeze
+        PROFESSOR_NOT_FOUND_ERROR_MESSAGE = "professor not found".freeze
+        PROFESSOR_DELETED_ERROR_MESSAGE = "professor was deleted".freeze
       end
 
       attr_reader :body
