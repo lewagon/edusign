@@ -204,6 +204,10 @@ module Edusign
       }.to_json
     end
 
+    def students
+      api(:get, "/student").result
+    end
+
     # TEACHER
 
     def teacher_by_uid(teacher_uid:)
