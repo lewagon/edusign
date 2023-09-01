@@ -236,7 +236,7 @@ module Edusign
 
       response.result
     rescue Response::Error => e
-      raise e unless [Response::Error::PROFESSOR_NOT_FOUND_ERROR_MESSAGE, Response::Error::PROFESSOR_DELETED_ERROR_MESSAGE].include?(e.message)
+      raise e unless [Response::Error::PROFESSOR_NOT_FOUND_ERROR_MESSAGE, Response::Error::PROFESSOR_DELETED_ERROR_MESSAGE].include?(e.message) || e.message.include?(Response::Error::CANNOT_GET_PROFESSOR_BY_EMAIL_ERROR_MESSAGE)
 
       response = create_professor(first_name: first_name, last_name: last_name, email: email)
       response.result
@@ -286,6 +286,7 @@ module Edusign
       class Error < StandardError
         PROFESSOR_NOT_FOUND_ERROR_MESSAGE = "professor not found".freeze
         PROFESSOR_DELETED_ERROR_MESSAGE = "professor was deleted".freeze
+        CANNOT_GET_PROFESSOR_BY_EMAIL_ERROR_MESSAGE = "Error - cannot get professor by email".freeze
       end
 
       attr_reader :body
