@@ -231,12 +231,11 @@ module Edusign
 
     def find_or_create_professor(first_name:, last_name:, email:)
       response = api :get, "/professor/by-email/#{email}"
-      raise Response::Error, Response::Error::PROFESSOR_NOT_FOUND_ERROR_MESSAGE if response.message == "professor not found"
       raise Response::Error, Response::Error::PROFESSOR_DELETED_ERROR_MESSAGE if response.result.present? && response.result[:HIDDEN].any? && response.result[:HIDDEN].include?(response.result[:ID])
 
       response.result
     rescue Response::Error => e
-      raise e unless [Response::Error::PROFESSOR_NOT_FOUND_ERROR_MESSAGE, Response::Error::PROFESSOR_DELETED_ERROR_MESSAGE].include?(e.message) || e.message.include?(Response::Error::CANNOT_GET_PROFESSOR_BY_EMAIL_ERROR_MESSAGE)
+      raise e unless [Response::Error::PROFESSOR_DELETED_ERROR_MESSAGE].include?(e.message) || e.message.include?(Response::Error::CANNOT_GET_PROFESSOR_BY_EMAIL_ERROR_MESSAGE)
 
       response = create_professor(first_name: first_name, last_name: last_name, email: email)
       response.result
@@ -284,7 +283,6 @@ module Edusign
 
     class Response
       class Error < StandardError
-        PROFESSOR_NOT_FOUND_ERROR_MESSAGE = "professor not found".freeze
         PROFESSOR_DELETED_ERROR_MESSAGE = "professor was deleted".freeze
         CANNOT_GET_PROFESSOR_BY_EMAIL_ERROR_MESSAGE = "Error - cannot get professor by email".freeze
       end
