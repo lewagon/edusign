@@ -145,7 +145,7 @@ module Edusign
     end
 
     def remove_student_from_course(course_uid:, student_uid:)
-      api :delete, "/course/attendance/#{course_uid}?studentId=#{student_uid}"
+      api :delete, "/course/attendance/#{course_uid}", {studentId: student_uid}.to_json
     end
 
     def send_signature_email(course_uid:)
@@ -270,7 +270,7 @@ module Edusign
     private
 
     def api(http_method, path, body = {}, opts = {})
-      request = if http_method.match?(/^(get|delete)$/)
+      request = if http_method == :get
         self.class.send(http_method, path, headers: options(opts))
       else
         self.class.send(http_method, path, body: body, headers: options(opts))
