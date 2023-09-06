@@ -144,6 +144,10 @@ module Edusign
       raise e unless e.message == STUDENT_ALREADY_ADDED_TO_COURSE_ERROR_MESSAGE
     end
 
+    def remove_student_from_course(course_uid:, student_uid:)
+      api :delete, "/course/attendance/#{course_uid}", {studentId: student_uid}.to_json
+    end
+
     def send_signature_email(course_uid:)
       students = course(course_uid: course_uid)[:STUDENTS].reject { |student| student[:state] }.map { |student| student[:studentId] }
       api :post, "/course/send-sign-emails", {"course" => course_uid, "students" => students}.to_json
