@@ -145,7 +145,7 @@ module Edusign
     end
 
     def remove_student_from_course(course_uid:, student_uid:)
-      api :delete, "/course/attendance/#{course_uid}", {studentId: student_uid}.to_json
+      api :delete, "/course/attendance/#{course_uid}?studentId=#{student_uid}"
     end
 
     def send_signature_email(course_uid:)
