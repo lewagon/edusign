@@ -126,9 +126,14 @@ module Edusign
       api :delete, "/course/#{course_uid}"
     end
 
-    def courses(group_uid: nil)
+    def courses(group_uid: nil, starts_at: nil, ends_at: nil)
+      query = {
+        groupId: group_uid,
+        start: starts_at,
+        end: ends_at
+      }.compact
       path = "/course"
-      path += "?groupId=#{group_uid}" if group_uid.present?
+      path += "?#{query.to_query}" if query.present?
       response = api :get, path
       response.result
     end
@@ -137,6 +142,10 @@ module Edusign
       api :put, "/course/attendance/#{course_uid}", {studentId: student_uid}.to_json
     rescue Response::Error => e
       raise e unless e.message == STUDENT_ALREADY_ADDED_TO_COURSE_ERROR_MESSAGE
+    end
+
+    def remove_student_from_course(course_uid:, student_uid:)
+      api :delete, "/course/attendance/#{course_uid}", {studentId: student_uid}.to_json
     end
 
     def send_signature_email(course_uid:)
