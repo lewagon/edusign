@@ -126,9 +126,14 @@ module Edusign
       api :delete, "/course/#{course_uid}"
     end
 
-    def courses(group_uid: nil)
+    def courses(group_uid: nil, starts_at: nil, ends_at: nil)
+      query = {
+        groupId: group_uid,
+        start: starts_at,
+        end: ends_at
+      }.compact
       path = "/course"
-      path += "?groupId=#{group_uid}" if group_uid.present?
+      path += "?#{query.to_query}" if query.present?
       response = api :get, path
       response.result
     end
