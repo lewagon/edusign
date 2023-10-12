@@ -236,6 +236,9 @@ module Edusign
         dontSendCredentials: true
       }
       api :post, "/professor", payload.to_json
+    rescue Response::ProfessorAlreadyExistsError
+      # NOTE(Eschults): try again finding the professor
+      find_or_create_professor(first_name: first_name, last_name: last_name, email: email)
     end
 
     def find_or_create_professor(first_name:, last_name:, email:)
@@ -279,6 +282,7 @@ module Edusign
       raise GatewayTimeoutError, request.message if request.code == 504
 
       response = Response.new(JSON.parse(request.body, symbolize_names: true))
+      raise Response::ProfessorAlreadyExistsError, response.message if response.message == Response::ProfessorAlreadyExistsError::PROFESSOR_ALREADY_EXISTS_MESSAGE
       raise Response::Error, response.message if response.error?
 
       response
@@ -294,6 +298,10 @@ module Edusign
       class Error < StandardError
         PROFESSOR_DELETED_ERROR_MESSAGE = "professor was deleted".freeze
         CANNOT_GET_PROFESSOR_BY_EMAIL_ERROR_MESSAGE = "Error - cannot get professor by email".freeze
+      end
+
+      class ProfessorAlreadyExistsError
+        PROFESSOR_ALREADY_EXISTS_MESSAGE = "Professor already exists in this school".freeze
       end
 
       attr_reader :body
