@@ -248,6 +248,10 @@ module Edusign
 
       response = create_professor(first_name: first_name, last_name: last_name, email: email)
       response.result
+    rescue ProfessorAlreadyExistsError::Error => e
+      raise e unless e.message == Response::Error::CANNOT_GET_PROFESSOR_BY_EMAIL_ERROR_MESSAGE
+
+      response.result
     end
 
     def teacher_signature_link_for_course(course_uid:)
@@ -279,6 +283,7 @@ module Edusign
       raise GatewayTimeoutError, request.message if request.code == 504
 
       response = Response.new(JSON.parse(request.body, symbolize_names: true))
+      raise Response::ProfessorAlreadyExistsError, response.message if response.message == Response::Error::PROFESSOR_ALREADY_EXISTS_MESSAGE
       raise Response::Error, response.message if response.error?
 
       response
@@ -294,7 +299,10 @@ module Edusign
       class Error < StandardError
         PROFESSOR_DELETED_ERROR_MESSAGE = "professor was deleted".freeze
         CANNOT_GET_PROFESSOR_BY_EMAIL_ERROR_MESSAGE = "Error - cannot get professor by email".freeze
+        PROFESSOR_ALREADY_EXISTS_MESSAGE = "Professor already exists in this school".freeze
       end
+
+      class ProfessorAlreadyExistsError; end
 
       attr_reader :body
 
