@@ -248,10 +248,9 @@ module Edusign
 
       response = create_professor(first_name: first_name, last_name: last_name, email: email)
       response.result
-    rescue ProfessorAlreadyExistsError::Error => e
-      raise e unless e.message == Response::Error::CANNOT_GET_PROFESSOR_BY_EMAIL_ERROR_MESSAGE
-
-      response.result
+    rescue ProfessorAlreadyExistsError::Error
+      # NOTE(Eschults): try again finding the professor
+      find_or_create_professor(first_name: first_name, last_name: last_name, email: email)
     end
 
     def teacher_signature_link_for_course(course_uid:)
