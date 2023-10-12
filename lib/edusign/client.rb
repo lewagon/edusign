@@ -236,6 +236,9 @@ module Edusign
         dontSendCredentials: true
       }
       api :post, "/professor", payload.to_json
+    rescue Response::ProfessorAlreadyExistsError
+      # NOTE(Eschults): try again finding the professor
+      find_or_create_professor(first_name: first_name, last_name: last_name, email: email)
     end
 
     def find_or_create_professor(first_name:, last_name:, email:)
@@ -248,9 +251,6 @@ module Edusign
 
       response = create_professor(first_name: first_name, last_name: last_name, email: email)
       response.result
-    rescue Response::ProfessorAlreadyExistsError
-      # NOTE(Eschults): try again finding the professor
-      find_or_create_professor(first_name: first_name, last_name: last_name, email: email)
     end
 
     def teacher_signature_link_for_course(course_uid:)
