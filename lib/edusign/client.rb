@@ -174,7 +174,8 @@ module Edusign
     end
 
     def create_or_update_student(first_name:, last_name:, email:, student_uid: nil, group_uids: [])
-      student = student_uid.present? ? student_by_uid(student_uid: student_uid) : student_by_email(email: email)
+      student = student_by_uid(student_uid: student_uid)
+      student = student_by_email(email: email) if student.nil?
       raise Response::Error, "Student doesn't exist" if student.nil?
       raise Response::Error, "Student was deleted from edusign" if student[:HIDDEN] == 1
 
