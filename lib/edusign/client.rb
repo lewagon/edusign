@@ -18,6 +18,8 @@ module Edusign
 
     class GatewayTimeoutError < StandardError; end
 
+    class CourseUidNilError < StandardError; end
+
     def initialize(account_api_key: config.account_api_key)
       @account_api_key = account_api_key
 
@@ -64,6 +66,8 @@ module Edusign
     # COURSE
 
     def course(course_uid:)
+      raise CourseUidNilError, "Course UID can't be nil" if course_uid.blank?
+
       response = api :get, "/course/#{course_uid}"
       response.result
     rescue Response::Error => e
