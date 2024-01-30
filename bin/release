@@ -1,0 +1,42 @@
+#!/usr/bin/env ruby
+require 'json'
+
+SEMVER_PATTERN = /^(?<major>0|[1-9]\d*)\.(?<minor>0|[1-9]\d*)\.(?<patch>0|[1-9]\d*)(?:-(?<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/m
+version = ""
+
+unless `git branch --show-current`.strip == 'master'
+  puts "⚠️  You must be on master to run bin/release script"
+  return
+end
+
+# unless `git status`.match?(/nothing to commit, working tree clean/)
+#   puts "⚠️  Your git status must be clean to run bin/release script"
+#   return
+# end
+
+system "git pull origin master"
+puts "You're about to deploy a new version of Edusign gem"
+puts "Before proceeding, check out `master`'s last commit"
+system "gh browse $(git rev-parse HEAD)"
+puts "Is the CI green? (y/n)"
+print "> "
+continue = gets.chomp
+return unless continue == "y"
+
+until version.match?(SEMVER_PATTERN)
+  puts "Not a correct version number. Version number must follow the semver pattern. See https://semver.org/." unless version.empty?
+  puts ""
+  puts "Previous version released:"
+  system "gh release list --limit 1 --repo lewagon/edusign | awk '{print $1}'"
+  puts ""
+  puts "Which version number do you want to release?"
+  print "> "
+  version = gets.chomp
+end
+
+puts "Release version v#{version}"
+# system "git tag v#{version}"
+# system "git push origin v#{version}"
+# system "gh release create v#{version} --generate-notes"
+
+puts "Version v#{version} released! 🎉"
