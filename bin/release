@@ -39,6 +39,12 @@ gem_version_path = File.join(File.dirname(__FILE__), "../lib/edusign/version.rb"
 file_lines = File.open(gem_version_path, "r").readlines
 file_lines[3] = "  VERSION = \"#{version}\"\n"
 File.open(gem_version_path, "wb") {|file| file.write(file_lines.join) }
+puts "Commit changes on GitHub"
+system "git add ../lib/edusign/version.rb"
+system "git commit -m 'Commit v#{version}'"
+puts "Push to master"
+system "git push origin master"
+puts "Create tag and release on GitHub"
 system "git tag v#{version}"
 system "git push origin v#{version}"
 system "gh release create v#{version} --generate-notes"
