@@ -40,7 +40,7 @@ file_lines = File.open(gem_version_path, "r").readlines
 file_lines[3] = "  VERSION = \"#{version}\"\n"
 File.open(gem_version_path, "wb") {|file| file.write(file_lines.join) }
 puts "Commit changes on GitHub"
-system "git add ../lib/edusign/version.rb"
+system "git add lib/edusign/version.rb"
 system "git commit -m 'Commit v#{version}'"
 puts "Push to master"
 system "git push origin master"
