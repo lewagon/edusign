@@ -9,10 +9,10 @@ unless `git branch --show-current`.strip == 'master'
   return
 end
 
-# unless `git status`.match?(/nothing to commit, working tree clean/)
-#   puts "⚠️  Your git status must be clean to run bin/release script"
-#   return
-# end
+unless `git status`.match?(/nothing to commit, working tree clean/)
+  puts "⚠️  Your git status must be clean to run bin/release script"
+  return
+end
 
 system "git pull origin master"
 puts "You're about to deploy a new version of Edusign gem"
@@ -35,8 +35,12 @@ until version.match?(SEMVER_PATTERN)
 end
 
 puts "Release version v#{version}"
-# system "git tag v#{version}"
-# system "git push origin v#{version}"
-# system "gh release create v#{version} --generate-notes"
+gem_version_path = File.join(File.dirname(__FILE__), "../lib/edusign/version.rb")
+file_lines = File.open(gem_version_path, "r").readlines
+file_lines[3] = "  VERSION = \"#{version}\"\n"
+File.open(gem_version_path, "wb") {|file| file.write(file_lines.join) }
+system "git tag v#{version}"
+system "git push origin v#{version}"
+system "gh release create v#{version} --generate-notes"
 
 puts "Version v#{version} released! 🎉"
