@@ -26,6 +26,13 @@ module Edusign
       raise NoApiKeyError, "Please provide an Edusing account API key" if @account_api_key.nil?
     end
 
+    # ABSENCES
+
+    def justified_absences
+      response = api :get, "/justified-absence"
+      response.result
+    end
+
     # GROUP
 
     def group(group_uid:)
