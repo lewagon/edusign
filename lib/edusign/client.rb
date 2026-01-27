@@ -179,7 +179,7 @@ module Edusign
       api :post, "/student", payload.to_json
     end
 
-    def update_student(student_uid:, first_name:, last_name:, email:, group_uids: [])
+    def update_student(student_uid:, first_name:, last_name:, email:, group_uids: [], training_name: nil)
       payload = {
         student: {
           ID: student_uid,
@@ -187,7 +187,8 @@ module Edusign
           LASTNAME: last_name,
           EMAIL: email,
           SEND_EMAIL_CREDENTIALS: false,
-          GROUPS: group_uids
+          GROUPS: group_uids,
+          TRAINING_NAME: training_name
         }
       }
       api :patch, "/student", payload.to_json
