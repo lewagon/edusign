@@ -166,7 +166,7 @@ module Edusign
 
     # STUDENT
 
-    def create_student(first_name:, last_name:, email:, group_uids: [])
+    def create_student(first_name:, last_name:, email:, group_uids: [], training_name: nil)
       payload = {
         student: {
           FIRSTNAME: first_name,
@@ -194,15 +194,15 @@ module Edusign
       api :patch, "/student", payload.to_json
     end
 
-    def create_or_update_student(first_name:, last_name:, email:, student_uid: nil, group_uids: [])
+    def create_or_update_student(first_name:, last_name:, email:, student_uid: nil, group_uids: [], training_name: nil)
       @student = student_by_uid(student_uid: student_uid) if student_uid.present?
       @student = student_by_email(email: email) if @student.nil?
       raise Response::Error, "Student doesn't exist" if @student.nil?
       raise Response::Error, "Student was deleted from edusign" if @student[:HIDDEN] == 1
 
-      update_student(student_uid: @student[:ID], first_name: first_name, last_name: last_name, email: email, group_uids: group_uids)
+      update_student(student_uid: @student[:ID], first_name: first_name, last_name: last_name, email: email, group_uids: group_uids, training_name: training_name)
     rescue Response::Error => _e
-      create_student(first_name: first_name, last_name: last_name, email: email, group_uids: group_uids)
+      create_student(first_name: first_name, last_name: last_name, email: email, group_uids: group_uids, training_name: training_name)
     end
 
     def student_by_uid(student_uid:)
