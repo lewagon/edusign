@@ -5,6 +5,7 @@ module Edusign
   class Client
     include ActiveSupport::Configurable
     include HTTParty
+
     base_uri "https://ext.edusign.fr/v1"
 
     ALREADY_LOCKED_ERROR_MESSAGE = "Course already locked".freeze
